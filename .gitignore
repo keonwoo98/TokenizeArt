@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Hardhat
+code/cache/
+code/artifacts/
+code/ignition/deployments/
+code/typechain-types/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+website/dist/
+
+# Coverage
+coverage/
+coverage.json
+
+# Misc
+*.log

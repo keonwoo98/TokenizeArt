@@ -1,0 +1,27 @@
+{
+  "name": "tokenizeart42",
+  "version": "1.0.0",
+  "description": "BEP-721 NFT project for 42 TokenizeArt on BSC Testnet",
+  "type": "module",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:bsc-testnet": "hardhat ignition deploy ./ignition/modules/TokenizeArt42.ts --network bscTestnet",
+    "mint": "hardhat run scripts/mint-nft.ts --network bscTestnet"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.0.7",
+    "@nomicfoundation/hardhat-ignition-viem": "^3.0.7",
+    "@nomicfoundation/hardhat-network-helpers": "^3.0.3",
+    "@nomicfoundation/hardhat-node-test-reporter": "^3.0.2",
+    "@nomicfoundation/hardhat-node-test-runner": "^3.0.8",
+    "@nomicfoundation/hardhat-verify": "^3.0.10",
+    "@nomicfoundation/hardhat-viem": "^3.0.2",
+    "@nomicfoundation/hardhat-viem-assertions": "^3.0.5",
+    "@nomicfoundation/ignition-core": "^3.0.7",
+    "@openzeppelin/contracts": "^5.2.0",
+    "dotenv": "^16.4.0",
+    "hardhat": "^3.1.9",
+    "viem": "^2.43.0"
+  }
+}

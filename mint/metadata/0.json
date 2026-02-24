@@ -1,0 +1,24 @@
+{
+  "name": "42 TokenizeArt Genesis",
+  "description": "A unique NFT created for the 42 TokenizeArt project. This piece represents the intersection of blockchain technology and digital art, celebrating the spirit of 42 school.",
+  "artist": "keokim",
+  "image": "ipfs://QmWDH7Ka2d3BvyDFtruUtNciMqBRiLp6A5yFSqPaDnpMUU",
+  "attributes": [
+    {
+      "trait_type": "School",
+      "value": "42"
+    },
+    {
+      "trait_type": "Artist",
+      "value": "keokim"
+    },
+    {
+      "trait_type": "Collection",
+      "value": "Genesis"
+    },
+    {
+      "trait_type": "Network",
+      "value": "BSC Testnet"
+    }
+  ]
+}
