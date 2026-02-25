@@ -17,49 +17,48 @@ export function MintButton() {
   }
 
   if (!isConnected) {
-    return <p style={{ color: "#888" }}>Connect your wallet to mint</p>;
+    return (
+      <div className="mint-area">
+        <p className="mint-area__prompt">Connect your wallet to mint</p>
+      </div>
+    );
   }
 
+  const busy = isPending || isConfirming;
+  const label = isPending
+    ? "Confirm in Wallet..."
+    : isConfirming
+      ? "Minting..."
+      : "Mint NFT";
+
   return (
-    <div style={{ textAlign: "center" }}>
-      <button
-        onClick={handleMint}
-        disabled={isPending || isConfirming}
-        style={{
-          padding: "16px 48px",
-          fontSize: "18px",
-          fontWeight: "bold",
-          background: isPending || isConfirming
-            ? "#555"
-            : "linear-gradient(135deg, #00d4ff, #7b2ff7)",
-          color: "white",
-          border: "none",
-          borderRadius: "12px",
-          cursor: isPending || isConfirming ? "not-allowed" : "pointer",
-          transition: "opacity 0.2s",
-        }}
-      >
-        {isPending ? "Confirm in Wallet..." : isConfirming ? "Minting..." : "Mint On-Chain NFT"}
+    <div className="mint-area">
+      <button className="mint-btn" onClick={handleMint} disabled={busy}>
+        {busy ? (
+          <span className="loading__spinner" />
+        ) : (
+          <span className="mint-btn__icon">&#9670;</span>
+        )}
+        {label}
       </button>
 
       {isSuccess && hash && (
-        <p style={{ color: "#00d4ff", marginTop: "16px" }}>
-          Minted!{" "}
+        <div className="mint-result mint-result--success">
+          Minted successfully!
           <a
             href={`https://testnet.bscscan.com/tx/${hash}`}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "#7b2ff7" }}
           >
-            View on BscScan
+            View on BscScan &rarr;
           </a>
-        </p>
+        </div>
       )}
 
       {error && (
-        <p style={{ color: "#ff4444", marginTop: "16px", fontSize: "14px" }}>
-          Error: {error.message.slice(0, 100)}
-        </p>
+        <div className="mint-result mint-result--error">
+          {error.message.slice(0, 120)}
+        </div>
       )}
     </div>
   );

@@ -24,9 +24,9 @@ const config = {
     },
   },
   plugins: [hardhatViem, hardhatNodeTestRunner, hardhatIgnition, hardhatVerify],
-  etherscan: {
-    apiKey: {
-      bscTestnet: configVariable("BSCSCAN_API_KEY"),
+  verify: {
+    etherscan: {
+      apiKey: configVariable("BSCSCAN_API_KEY"),
     },
   },
 };
