@@ -573,65 +573,72 @@ echo "eyJuYW1lI..." | base64 -d
 
 ## 7. Live Demo Script / 실제 시연 스크립트
 
-평가 당일 순서대로 따라하면 됩니다.
+> **평가는 영어로 진행됩니다.** 각 단계마다 **명령을 치기 전에 영어로 무엇을 보여줄지 먼저 말하고**, 결과가 나오면 영어로 해석해 주세요. 아래 `🗣 Say:` 가 그대로 읽으면 되는 영어 멘트입니다. 침묵하고 명령만 치지 마세요 — 항상 말하면서 보여주세요.
 
-> ⚠️ **시연 원칙:** 재배포(deploy)는 하지 마세요. 이미 BSC Testnet에 배포·민팅된 컨트랙트가 가장 강력한 증거입니다. `.env` 없이 BscScan + 웹사이트(MetaMask)만으로 전체 시연이 가능합니다. (이유는 9.12, 9.13 참고)
+> ⚠️ **Demo principle / 시연 원칙:** Do NOT redeploy. The already-deployed and minted contracts on BSC Testnet are the strongest evidence. The whole demo works with just BscScan + the website (MetaMask), no `.env` needed. (재배포 금지 — 9.12, 9.13 참고)
 
-### Phase 1: 필수 파트 시연 (10-15분)
+### Phase 1: Mandatory Part / 필수 파트 (10-15분)
 
+**[Intro] 시작 멘트**
+> 🗣 Say: *"Hi, this is my TokenizeArt project — a BEP-721 NFT built on BNB Chain's BSC Testnet. I'll walk you through the image, the smart contract, the proof of ownership on-chain, and then the bonus features. Let me start with the project structure."*
+
+**[1] Project structure / 프로젝트 구조**
+```bash
+ls -la
 ```
-준비:
-- 터미널을 TokenizeArt/ 디렉토리에서 열기
-- 브라우저에서 BscScan 탭 미리 열어두기
+> 🗣 Say: *"The repository follows the exact folder structure from the subject PDF: a README, a `code` folder with the contracts, `deployment`, `mint`, `documentation`, and a bonus `website` folder."*
 
-[1] 프로젝트 구조 보여주기
-$ ls -la
-→ README.md, code/, deployment/, mint/, documentation/, website/ 확인
-
-[2] 스마트 컨트랙트 코드 리뷰
-$ cat code/contracts/TokenizeArt42.sol
-→ ERC721URIStorage + Ownable 상속, onlyOwner, _safeMint 설명
-
-[3] 테스트 실행
-$ cd code && npx hardhat test
-→ 15개 전부 통과 보여주기
-
-[4] NFT 이미지 보여주기
-$ open ../mint/image/tokenizeart42.svg
-→ 42가 명확히 보이는 우주 테마 SVG
-
-[5] IPFS 확인 (브라우저)
-→ https://gateway.pinata.cloud/ipfs/QmWDH7Ka2d3BvyDFtruUtNciMqBRiLp6A5yFSqPaDnpMUU
-→ 이미지가 IPFS에서 로드됨
-
-[6] BscScan에서 ownerOf 확인 (핵심!)
-→ https://testnet.bscscan.com/address/0xb95Fd55B6103AC0939441853eE78524D0Fb20233#readContract
-→ ownerOf(0) → 0xE6CB80D7d2439512b36f841FF8F82a87500f220b
-
-[7] tokenURI 확인
-→ tokenURI(0) → ipfs://QmUmA7VWfmZi221yoG1cwv63P3rM9yaTchxorLdLGp4KNg
-→ IPFS gateway에서 JSON 메타데이터 확인
-
-[8] 배포 기록 + 문서
-$ cat ../deployment/deployed-address.json
-$ ls ../documentation/
+**[2] Smart contract code / 스마트 컨트랙트 코드**
+```bash
+cat code/contracts/TokenizeArt42.sol
 ```
+> 🗣 Say: *"This is the main contract. It inherits from OpenZeppelin's ERC721URIStorage, which is the BEP-721 NFT standard with per-token metadata, and Ownable for access control. The `mintNFT` function is protected by the `onlyOwner` modifier, so only I — the deployer — can mint. I use `_safeMint` so that if the receiver is a contract, it must be able to handle NFTs, which prevents tokens from getting locked forever."*
 
-### Phase 2: 보너스 파트 시연 (10분)
-
+**[3] Run tests / 테스트 실행**
+```bash
+cd code && npx hardhat test
 ```
-[9] 온체인 NFT 확인 (BscScan)
-→ https://testnet.bscscan.com/address/0x5cF188eeE62fDC0E2129CDD1cd8E7A75625d62EB#readContract
-→ tokenURI(0) → data:application/json;base64,... (메타데이터+이미지 전부 온체인)
+> 🗣 Say: *"Here are my 15 automated tests, all passing. They cover deployment, owner-only minting, token ID incrementing, metadata, and the on-chain SVG generation. Notice test number six — it verifies that a non-owner is rejected when trying to mint, which is the security requirement from the subject."*
 
-[10] 웹사이트 시연
-$ cd ../website && npm install && npm run dev
-→ 브라우저에서 localhost:5173 열기
-→ Connect Wallet (MetaMask)
-→ Mint 버튼 클릭 (BSC Testnet에 tBNB 있어야 함)
-→ NFT Display에서 Token ID 입력하여 온체인 SVG 확인
-→ Owner Check에서 소유자 확인
+**[4] NFT image / NFT 이미지**
+```bash
+open ../mint/image/tokenizeart42.svg
 ```
+> 🗣 Say: *"This is my NFT artwork. It's a space-themed SVG with the number 42 in pixel-art style right in the center, which is the mandatory constraint from the subject."*
+
+**[5] Image on IPFS / IPFS 이미지 확인 (브라우저)**
+`https://gateway.pinata.cloud/ipfs/QmWDH7Ka2d3BvyDFtruUtNciMqBRiLp6A5yFSqPaDnpMUU`
+> 🗣 Say: *"The image is stored on IPFS, a distributed storage network, as the subject requires. This `Qm...` part of the URL is the content hash, or CID. Because the address is derived from the file's content, the content can't be changed without changing the address — that guarantees integrity."*
+
+**[6] Prove ownership with ownerOf / 소유권 증명 (핵심!)**
+`https://testnet.bscscan.com/address/0xb95Fd55B6103AC0939441853eE78524D0Fb20233#readContract`
+> 🗣 Say: *"Now the most important part. On BscScan's Read Contract tab, I'll call `ownerOf` with token ID zero. It returns `0xE6CB80...220b`, which is my wallet. This is the proof of ownership the subject asks for, recorded permanently on the blockchain — nobody can erase it."*
+
+**[7] tokenURI / 메타데이터 주소 확인**
+> 🗣 Say: *"Next I call `tokenURI(0)`. It returns `ipfs://QmUmA7...`, the IPFS address of the metadata. If I open that, I get the JSON with the name, the artist — my login keokim — and the image field, which points to the artwork we just saw."*
+
+**[8] Deployment record + docs / 배포 기록 + 문서**
+```bash
+cat ../deployment/deployed-address.json
+ls ../documentation/
+```
+> 🗣 Say: *"All deployment info — network, chain ID 97, and both contract addresses — is recorded here. And the documentation folder has a full whitepaper and this evaluation guide."*
+
+### Phase 2: Bonus Part / 보너스 파트 (10분)
+
+> 🗣 Say: *"The subject says bonuses are only assessed if the mandatory part is perfect. Since everything mandatory works, let me show the three bonus features: a beautiful NFT, a minting website, and a fully on-chain NFT."*
+
+**[9] Fully on-chain NFT / 온체인 NFT 확인 (BscScan)**
+`https://testnet.bscscan.com/address/0x5cF188eeE62fDC0E2129CDD1cd8E7A75625d62EB#readContract`
+> 🗣 Say: *"This second contract stores everything on-chain. When I call `tokenURI(0)`, it returns a `data:application/json;base64` string — that's the metadata generated by the contract itself, not from IPFS. If I decode the Base64, the image field is also a `data:image/svg+xml;base64` string, which proves the artwork lives entirely inside the blockchain. So even if IPFS or Pinata disappears, this NFT survives forever."*
+
+**[10] Minting website / 민팅 웹사이트**
+```bash
+cd ../website && npm run dev
+```
+> 🗣 Say: *"This is my minting website, built with React, wagmi, and RainbowKit. I click Connect Wallet to link MetaMask, then click Mint — MetaMask asks me to sign and pay gas in test BNB. After a few seconds the NFT is minted. In the Explorer section I enter the token ID and the on-chain SVG loads directly from the contract. In the Ownership section I can check any token's owner — that's the `ownerOf` function with a graphical interface."*
+
+> 🗣 Note: *"This minting goes through MetaMask, so it signs the transaction — I don't even need my private key in a `.env` file for this."*
 
 ---
 
@@ -808,7 +815,8 @@ IPFS는 **누군가가 파일을 들고 있어야만 받을 수 있는** 토렌�
 - 무명의 NFT는 사실상 **Pinata 하나만** 핀하고 있어서, Pinata가 핀을 풀면 그림이 사라짐.
 - → **이게 보너스 온체인 컨트랙트를 만든 이유.** 그림을 블록체인에 박아서 Pinata 의존 제거.
 
-> 평가 답변: "IPFS는 자동 영구 보관이 아니에요. 명시적으로 핀한 노드만 들고 있고, 인기 없는 파일은 Pinata가 핀 풀면 사라집니다. 그래서 온체인 컨트랙트로 IPFS 의존을 없앤 버전도 만들었습니다."
+> **Say (EN):** *"IPFS isn't automatic permanent storage. Only nodes that explicitly pin a file keep it, so an unpopular file can disappear if Pinata unpins it. That's exactly why I also built the on-chain contract that removes the IPFS dependency entirely."*
+> **평가 답변 (KR):** "IPFS는 자동 영구 보관이 아니에요. 명시적으로 핀한 노드만 들고 있고, 인기 없는 파일은 Pinata가 핀 풀면 사라집니다. 그래서 온체인 컨트랙트로 IPFS 의존을 없앤 버전도 만들었습니다."
 
 ### 9.5 "탈중앙화"의 진짜 의미 (물리적 분산 ≠ 탈중앙)
 
@@ -822,7 +830,8 @@ IPFS는 **누군가가 파일을 들고 있어야만 받을 수 있는** 토렌�
 
 → **블록체인의 탈중앙화 = "물리적 분산"이 아니라 "한 주체가 좌우 못 함 + 데이터 변경 불가"(거버넌스적 의미).** AWS는 한 회사가 데이터를 지울 수 있지만, 블록체인은 노드 다수가 동의해야만 바뀜.
 
-> 평가 답변: "노드도 데이터센터에서 돌아가는 건 맞아요. 핵심은 한 회사가 좌우 못 하고, 합의 없이 데이터를 못 바꾼다는 거버넌스 차이입니다."
+> **Say (EN):** *"It's true the nodes run in data centers. The point of decentralization isn't physical distribution — it's governance: no single company controls it, and no data can change without consensus. That's the real difference from AWS, where one company can delete anything."*
+> **평가 답변 (KR):** "노드도 데이터센터에서 돌아가는 건 맞아요. 핵심은 한 회사가 좌우 못 하고, 합의 없이 데이터를 못 바꾼다는 거버넌스 차이입니다."
 
 ### 9.6 합의(Consensus)는 어떻게 이루어지나 — BSC의 PoSA
 
@@ -849,6 +858,8 @@ t=6    다수(2/3+) 동의 → 블록 영구 확정 → "토큰 #0 주인=keokim
 - 위변조 불가 이유: 거짓 블록은 다른 validator가 검증 시 들통. 11명 이상 매수해야 점령 가능(사실상 불가).
 - 삭제 불가 이유: 블록은 이전 블록 해시를 포함 → 과거를 바꾸려면 이후 모든 블록을 다시 만들어야 함.
 
+> **Say (EN):** *"BSC uses Proof of Staked Authority. 21 validators take turns producing a block every 3 seconds, the others verify it, and once a supermajority agrees, the block is final. My mint transaction was verified by them — they checked I'm the owner and have enough gas — before it was permanently recorded."*
+
 ### 9.7 비트코인 > 이더리움 > BSC 탈중앙화 차이
 
 | | 비트코인 | 이더리움 | BSC |
@@ -859,7 +870,8 @@ t=6    다수(2/3+) 동의 → 블록 영구 확정 → "토큰 #0 주인=keokim
 
 → BSC가 덜 탈중앙인 이유: ① validator가 21명뿐, ② 그 21명이 Binance 인증을 받아야 함("Authority"의 의미), ③ Binance가 사실상 좌우. 대신 빠르고 가스비 쌈.
 
-> 평가 답변: "BSC는 속도·비용은 우수하지만 validator가 적고 허가제라 탈중앙화 정도는 비트코인 ≫ 이더리움 > BSC 순입니다. 과제가 BNB Chain 파트너십이라 골랐고, 같은 코드를 이더리움에도 그대로 올릴 수 있어요."
+> **Say (EN):** *"BSC is great on speed and cost, but it has few validators and they're permissioned, so decentralization goes Bitcoin, then Ethereum, then BSC. I chose it because the subject is a BNB Chain partnership, and the same code runs on Ethereum unchanged since it's EVM-compatible."*
+> **평가 답변 (KR):** "BSC는 속도·비용은 우수하지만 validator가 적고 허가제라 탈중앙화 정도는 비트코인 ≫ 이더리움 > BSC 순입니다. 과제가 BNB Chain 파트너십이라 골랐고, 같은 코드를 이더리움에도 그대로 올릴 수 있어요."
 
 ### 9.8 가스비 원리 — 왜 온체인 NFT가 싸게 만들어졌나
 
@@ -878,7 +890,8 @@ uint256 hue1 = (tokenId * 137 + 42) % 360;  // 그림 데이터가 아니라 "�
 - `tokenURI`는 `view` 함수라 호출(그림 보기)은 가스 무료.
 - 의외로 mint 자체는 온체인이 더 쌈(IPFS 문자열 저장 안 하니까). 배포만 메인보다 2~3배 비쌈.
 
-> 평가 답변: "이미지 데이터가 아니라 이미지를 만드는 공식만 저장해서, 한 번만 저장하고 매번 계산합니다. 그래서 NFT가 아무리 많아도 컨트랙트 크기는 그대로고, 조회는 view 함수라 무료입니다."
+> **Say (EN):** *"I store the formula that generates the image, not the image data itself — stored once, computed on each call. So no matter how many NFTs are minted, the contract size stays the same, and reading is free because tokenURI is a view function."*
+> **평가 답변 (KR):** "이미지 데이터가 아니라 이미지를 만드는 공식만 저장해서, 한 번만 저장하고 매번 계산합니다. 그래서 NFT가 아무리 많아도 컨트랙트 크기는 그대로고, 조회는 view 함수라 무료입니다."
 
 ### 9.9 온체인 그림은 매번 다른가? — 결정론적 생성
 
@@ -892,6 +905,8 @@ tokenId=2 → hue1 = (2*137+42)%360 = 316  → 또 다른 색
 
 - "즉석 생성"의 의미 = **미리 저장 안 함, 호출 시 공식으로 계산**. 무작위가 아님.
 - 블록체인은 **결정론적**이어야 함 — 모든 노드가 같은 결과를 내야 합의 가능. 그래서 Solidity엔 진짜 랜덤 함수가 없음(필요하면 Chainlink VRF 같은 오라클 사용).
+
+> **Say (EN):** *"No — the same token always renders the same image; only different tokens differ. The generation is deterministic: it's computed from the token ID, not random. Blockchains must be deterministic so every node reaches the same result for consensus, which is why Solidity has no true randomness."*
 
 ### 9.10 mint 인자: 메인 2개 vs 온체인 1개
 
@@ -953,46 +968,46 @@ tokenId=2 → hue1 = (2*137+42)%360 = 316  → 또 다른 색
 
 ## 10. Line-by-Line Code Review / 코드 라인별 리뷰 대비
 
-> 평가관이 "이 줄은 뭐예요?"라고 물을 때 바로 답할 수 있도록 모든 키워드를 정리했습니다.
+> When the evaluator points at a line and asks "what is this?", read the **Say (EN)** column out loud. KR is for your own recall. / 평가관이 줄을 짚으며 물으면 Say(EN)을 읽으세요. KR은 본인 이해용.
 
-### 10.1 TokenizeArt42.sol — 키워드별 답변
+### 10.1 TokenizeArt42.sol
 
-| 코드 | 평가관이 물으면 이렇게 |
-|------|----------------------|
-| `// SPDX-License-Identifier: MIT` | "오픈소스 MIT 라이선스 명시. Solidity 권장사항이에요." |
-| `pragma solidity ^0.8.28;` | "Solidity 버전. 0.8 이상은 오버플로우 검사가 내장돼 있어요." |
-| `import "@openzeppelin/..."` | "검증된 NFT 부품 라이브러리. 직접 짜면 위험해서 표준을 씁니다." |
-| `is ERC721URIStorage, Ownable` | "상속. ERC721URIStorage=토큰별 URI 저장 NFT, Ownable=주인만 쓰는 기능." |
-| `uint256 private _nextTokenId;` | "다음 토큰 번호 카운터. private이라 외부 직접 접근 불가, totalMinted()로 공개." |
-| `constructor() ERC721("42 TokenizeArt by keokim","T42K") Ownable(msg.sender)` | "배포 시 1회 실행. 컬렉션 이름/심볼 설정, 배포자(msg.sender)를 owner로." |
-| `external` | "외부에서만 호출. 내부 호출 안 하니 가스 절약." |
-| `onlyOwner` | "owner만 호출 가능. 아무나 민팅 못 하게 막는 보안(PDF 요구사항)." |
-| `string calldata _tokenURI` | "메타데이터 IPFS 주소. calldata는 읽기전용이라 memory보다 가스 쌈." |
-| `uint256 tokenId = _nextTokenId; _nextTokenId++;` | "현재 ID 쓰고 카운터 증가. 상태 변경 먼저(CEI 패턴)." |
-| `_safeMint(to, tokenId)` | "NFT 발행. 받는 게 컨트랙트면 ERC721 수신 가능한지 확인 → 토큰 분실 방지." |
-| `_setTokenURI(tokenId, _tokenURI)` | "이 토큰과 메타데이터 주소를 연결." |
-| `function totalMinted() external view` | "발행 총량 반환. view라 가스 무료." |
+| Code | Say (EN) | KR |
+|------|----------|----|
+| `// SPDX-License-Identifier: MIT` | "Open-source MIT license — a Solidity best practice." | 오픈소스 MIT 라이선스 |
+| `pragma solidity ^0.8.28;` | "The compiler version. 0.8 and above have built-in overflow checks." | 0.8+는 오버플로우 검사 내장 |
+| `import "@openzeppelin/..."` | "Audited, battle-tested NFT building blocks — safer than writing them myself." | 검증된 표준 라이브러리 |
+| `is ERC721URIStorage, Ownable` | "Inheritance. ERC721URIStorage is an NFT with per-token URIs; Ownable gives owner-only access." | 상속: NFT+URI / 접근제어 |
+| `uint256 private _nextTokenId;` | "A counter for the next token ID. It's private, exposed through `totalMinted()`." | 토큰 번호 카운터 |
+| `constructor() ERC721("42 TokenizeArt by keokim","T42K") Ownable(msg.sender)` | "Runs once at deploy. Sets the collection name and symbol, and makes the deployer the owner." | 배포 시 1회: 이름/심볼/owner 설정 |
+| `external` | "Callable only from outside — saves gas since it's not called internally." | 외부 전용, 가스 절약 |
+| `onlyOwner` | "Only the owner can call this. It stops anyone from minting — the security requirement." | owner만 민팅 (보안) |
+| `string calldata _tokenURI` | "The metadata's IPFS address. `calldata` is read-only, cheaper than memory." | calldata가 더 쌈 |
+| `tokenId = _nextTokenId; _nextTokenId++;` | "Use the current ID, then increment — state change first, the checks-effects-interactions pattern." | CEI 패턴 |
+| `_safeMint(to, tokenId)` | "Mints the NFT. If the receiver is a contract, it checks the receiver can handle NFTs, preventing locked tokens." | 토큰 분실 방지 |
+| `_setTokenURI(tokenId, _tokenURI)` | "Links this token to its metadata address." | 토큰-메타데이터 연결 |
+| `function totalMinted() external view` | "Returns the total minted. It's a view function, so reading is free." | view라 무료 |
 
-### 10.2 TokenizeArt42OnChain.sol — 핵심 답변
+### 10.2 TokenizeArt42OnChain.sol
 
-| 코드 | 답변 |
-|------|------|
-| `_requireOwned(tokenId)` | "존재하지 않는 토큰이면 revert. 안전장치." |
-| `_generateSVG(tokenId)` | "토큰 ID로 SVG를 즉석 생성. 미리 저장 안 함." |
-| `(tokenId * 137 + 42) % 360` | "토큰별 색상 공식. 137은 소수라 색이 잘 흩어지고, +42로 0번에도 색 부여." |
-| `Base64.encode(bytes(svg))` | "SVG를 data URI로 만들려고 Base64 인코딩." |
-| `"data:application/json;base64,"` | "외부 서버 없이 컨트랙트가 직접 반환하는 메타데이터. 완전 온체인 증거." |
-| `_svgHeader/_svgShapes/_svgText` 분리 | "stack-too-deep 에러 회피 + 가독성. viaIR도 같은 이유." |
+| Code | Say (EN) | KR |
+|------|----------|----|
+| `_requireOwned(tokenId)` | "Reverts if the token doesn't exist — a safety guard." | 비존재 토큰 revert |
+| `_generateSVG(tokenId)` | "Generates the SVG on the fly from the token ID — nothing is pre-stored." | 즉석 생성 |
+| `(tokenId * 137 + 42) % 360` | "The per-token color formula. 137 is prime so hues spread out, and +42 gives token zero a color too." | 토큰별 색상 공식 |
+| `Base64.encode(bytes(svg))` | "Base64-encodes the SVG so it can be a data URI." | data URI용 인코딩 |
+| `"data:application/json;base64,"` | "Metadata returned by the contract itself, no external server — proof it's fully on-chain." | 완전 온체인 증거 |
+| `_svgHeader/_svgShapes/_svgText` split | "Split to avoid the stack-too-deep error and for readability — same reason I enabled viaIR." | stack-too-deep 회피 |
 
 ### 10.3 hardhat.config.ts
 
-| 설정 | 답변 |
-|------|------|
-| `version: "0.8.28"` | "Solidity 컴파일러 버전." |
-| `viaIR: true` | "온체인 컨트랙트의 긴 문자열 연결 컴파일을 위해 필수. 안 켜면 stack-too-deep 에러." |
-| `optimizer: { runs: 200 }` | "가스 최적화. 200은 배포비와 실행비의 균형값." |
-| `networks.bscTestnet` | "BSC Testnet 등록. --network bscTestnet로 지정 가능." |
-| `configVariable("PRIVATE_KEY")` | ".env에서 비밀값을 읽어옴. 코드에 키 안 박음." |
+| Setting | Say (EN) | KR |
+|---------|----------|----|
+| `version: "0.8.28"` | "The Solidity compiler version." | 컴파일러 버전 |
+| `viaIR: true` | "Required to compile the on-chain contract's long string concatenations — otherwise stack-too-deep." | 긴 문자열 컴파일용 |
+| `optimizer: { runs: 200 }` | "Gas optimization; 200 balances deploy cost against runtime cost." | 가스 최적화 |
+| `networks.bscTestnet` | "Registers BSC Testnet so I can target it with --network bscTestnet." | BSC Testnet 등록 |
+| `configVariable("PRIVATE_KEY")` | "Reads the secret from .env so no keys are hard-coded." | .env에서 키 읽음 |
 
 ### 10.4 테스트 15개 (코드 검증)
 
@@ -1034,11 +1049,18 @@ cd code && npx hardhat test   # 15개 전부 통과
 | 웹사이트 안 뜸 | BscScan Read/Write Contract로 모든 시연 가능 (백업) |
 | 모든 게 실패 | **이미 배포·민팅된 BscScan 기록이 진짜 증거.** "이미 mint된 #0이 영구히 살아있습니다." |
 
-### 11.4 만능 답변 3종
+### 11.4 만능 답변 3종 (universal fallback lines, in English)
 
-1. **개념 질문**: "쉽게 비유하면 ___ 같은 거예요." (9.0 표 활용)
-2. **모르는 질문**: "정확한 메커니즘은 OpenZeppelin 표준 라이브러리가 처리해서 세부는 확실치 않지만, 제 코드에서는 이렇게 씁니다."
-3. **검증 요청**: "BscScan에서 바로 보여드릴게요." → 클릭
+1. **Concept question / 개념 질문**: *"The simplest way to put it is, it's like ___."* (use the analogies in 9.0)
+2. **Don't know / 모르는 질문**: *"I'm not 100% sure of the internal details — that part is handled by the audited OpenZeppelin library — but in my code I use it like this."*
+3. **Asked to prove it / 검증 요청**: *"Let me show you directly on BscScan."* → click
+
+### 11.5 영어 시연 팁 (delivery tips)
+
+- 명령을 치기 **전에** 한 문장으로 무엇을 할지 먼저 말하기: *"Now I'll show you ..."*
+- 결과가 나오면 한 문장으로 해석: *"As you can see, this returns ... which means ..."*
+- 막히면 천천히: *"Let me show you on BscScan"* 하고 클릭으로 증명. 침묵보다 행동.
+- 핵심 동사: **deploy**(배포), **mint**(발행), **verify/prove ownership**(소유권 증명), **store on IPFS / on-chain**(저장).
 
 ---
 
