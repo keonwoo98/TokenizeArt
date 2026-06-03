@@ -492,15 +492,19 @@ cd code && npx hardhat test
 
 ### 6.1 Beautiful NFT / 아름다운 NFT
 
+> ⚠️ **두 개의 서로 다른 아트워크가 있다는 점을 반드시 기억하세요. 혼동하면 평가관 앞에서 모순됩니다.**
+> - **IPFS 아트워크** (이 파일, 메인 컨트랙트용): 우주 테마 + 픽셀아트 "42". 정적인 한 장.
+> - **온체인 아트워크** (`TokenizeArt42OnChain.sol`이 생성, 웹사이트가 표시): 기하학 제너러티브 — 그라디언트 배경 + 동심원 + 삼각형 + 큰 "42" + "TokenizeArt by keokim" + 토큰 번호. 토큰마다 색이 다름.
+> 👉 "아름다운 NFT"로 아래 우주 SVG를 보여주되, **웹사이트/온체인 데모에서 나오는 기하학 그림은 다른 작품**임을 미리 말하세요: *"My IPFS NFT is this space-themed pixel art, and my on-chain contract generates a different, geometric piece per token."*
+
 ```bash
 open mint/image/tokenizeart42.svg
 ```
 
-SVG 아트워크 구성 요소:
+IPFS SVG 아트워크 구성 요소:
 - 어두운 우주 배경 (방사형 그라디언트)
-- 4개의 다채로운 성운/오로라 레이어 (가우시안 블러)
-- 24개 흰색 별 + 4개 색깔 별
-- 2개의 유성
+- 여러 겹의 다채로운 성운/오로라 레이어 (가우시안 블러)
+- 20여 개의 흰색 별 + 색깔 별 + 유성
 - 네온 글로우 필터가 적용된 **42** 픽셀 아트 (16px 블록, 흰색→파란색 그라디언트)
 - "TOKENIZE ART" + "by keokim" 텍스트
 - 부유하는 우주 먼지 입자
@@ -519,9 +523,9 @@ npm run dev
 웹사이트 기능:
 1. **지갑 연결** — RainbowKit의 "Connect Wallet" 버튼 → MetaMask 연결
 2. **BSC Testnet 선택** — RainbowKit이 자동으로 네트워크 전환 제안
-3. **Mint 버튼** — "Mint On-Chain NFT" 클릭 → MetaMask에서 트랜잭션 승인
-4. **NFT 표시** — 민팅 후 Token ID 입력하면 온체인 SVG 이미지와 메타데이터 표시
-5. **소유자 확인** — Token ID 입력 + "Check" 클릭 → 소유자 주소 표시
+3. **Mint 버튼** — "Mint NFT" 클릭 → MetaMask에서 트랜잭션 승인 (버튼은 진행 중 "Confirm in Wallet..." → "Minting..."으로 바뀜)
+4. **NFT 표시 (Explorer)** — Token ID 입력하면 온체인 SVG 이미지와 메타데이터 표시
+5. **소유자 확인 (Ownership)** — Token ID 입력 → 소유자 주소 표시
 
 기술 스택:
 - React 18 + Vite (빌드)
@@ -640,6 +644,20 @@ cd ../website && npm run dev
 
 > 🗣 Note: *"This minting goes through MetaMask, so it signs the transaction — I don't even need my private key in a `.env` file for this."*
 
+### Phase 3: If the evaluator probes further / 평가관이 더 파고들 때 (on demand)
+
+> 이 단계들은 **요청받았을 때만** 보여주세요. 미리 안 해도 됩니다. PDF가 명시한 건 ownerOf뿐이지만, transfer/balanceOf/supportsInterface는 NFT 평가에서 자주 나옵니다.
+
+**[11] Transfer the NFT / NFT 양도** — BscScan **Write Contract** 탭
+> 🗣 Say: *"transferFrom is inherited from OpenZeppelin's ERC721 — I didn't write it, but it's fully functional. On the Write Contract tab I connect MetaMask as the owner, call `transferFrom(myAddress, otherAddress, tokenId)`, and then back on Read Contract `ownerOf(tokenId)` now returns the new owner. That's verifiable ownership transfer on-chain."*
+> ⚠️ 주의: 이건 토큰 소유자를 **영구히 바꿉니다**. 데모용으로는 온체인 컨트랙트의 여분 토큰을 쓰거나, 끝나고 다시 본인에게 transfer 하세요. 토큰 #0(메인)은 건드리지 않는 게 안전.
+
+**[12] balanceOf / 보유 수량** — BscScan **Read Contract** 탭
+> 🗣 Say: *"`balanceOf(myAddress)` returns how many tokens I hold in this collection. It increments on each mint and updates on transfer — same `ownerOf` read tab."*
+
+**[13] supportsInterface / EIP-165** — BscScan **Read Contract** 탭
+> 🗣 Say: *"`supportsInterface` comes from OpenZeppelin's ERC165 base. My contract registers `0x80ac58cd` for ERC-721 and `0x5b5e139f` for ERC-721 Metadata, so wallets and marketplaces call this to confirm my contract is a real NFT. I can pass `0x80ac58cd` here and it returns true."*
+
 ---
 
 ## 8. Expected Q&A / 예상 질문과 답변
@@ -664,6 +682,13 @@ cd ../website && npm run dev
 > **EN:** `ownerOf(tokenId)` reads from the internal mapping `_owners[tokenId]` maintained by the ERC721 contract. When `_safeMint(to, tokenId)` is called, it sets `_owners[tokenId] = to`. This mapping is stored on-chain and is publicly readable by anyone. If the token doesn't exist, it reverts with `ERC721NonexistentToken`.
 >
 > **KR:** `ownerOf(tokenId)`는 ERC721 컨트랙트의 내부 매핑 `_owners[tokenId]`를 읽습니다. `_safeMint(to, tokenId)`가 호출되면 `_owners[tokenId] = to`로 설정됩니다. 이 매핑은 블록체인에 저장되어 누구나 읽을 수 있습니다. 토큰이 존재하지 않으면 `ERC721NonexistentToken`으로 revert됩니다.
+
+### Q3b: "Transfer the token / show balanceOf / what is supportsInterface?"
+### Q3b: "토큰을 양도해보세요 / balanceOf / supportsInterface가 뭐죠?"
+
+> **EN:** All three come from OpenZeppelin's ERC721 base — I didn't write them, but they're live. `transferFrom(from, to, tokenId)` moves ownership (callable on BscScan Write Contract; then `ownerOf` shows the new owner). `balanceOf(address)` returns how many tokens an address holds. `supportsInterface(bytes4)` is from EIP-165 — my contract registers `0x80ac58cd` (ERC-721) and `0x5b5e139f` (ERC-721 Metadata), which is how marketplaces detect it's an NFT. (See demo steps 11–13.)
+>
+> **KR:** 셋 다 OpenZeppelin ERC721에서 상속받은 함수로, 제가 안 짰지만 동작합니다. `transferFrom(from, to, tokenId)`은 소유권 이전(BscScan Write Contract에서 호출 후 `ownerOf`로 확인), `balanceOf(address)`는 보유 수량, `supportsInterface(bytes4)`는 EIP-165 — `0x80ac58cd`(ERC-721)와 `0x5b5e139f`(ERC-721 Metadata)를 등록해 마켓플레이스가 NFT임을 감지합니다. (데모 11~13 참고)
 
 ### Q4: "What happens if IPFS goes down?"
 ### Q4: "IPFS가 다운되면 어떻게 되나요?"
@@ -864,7 +889,7 @@ t=6    다수(2/3+) 동의 → 블록 영구 확정 → "토큰 #0 주인=keokim
 
 | | 비트코인 | 이더리움 | BSC |
 |---|---|---|---|
-| 합의 주체 수 | 수많은 채굴자 | 약 100만 validator | **약 21~41명** |
+| 합의 주체 수 | 수많은 채굴자 | 수십만~100만+ validator (32 ETH 단위) | **active 21명** |
 | 진입 장벽 | 채굴기만 있으면 | 32 ETH면 누구나(무허가) | **Binance 인증 필요(허가제)** |
 | 거버넌스 | 누구도 단독 결정 불가 | 커뮤니티 합의 | Binance 영향력 큼 |
 
@@ -882,13 +907,15 @@ t=6    다수(2/3+) 동의 → 블록 영구 확정 → "토큰 #0 주인=keokim
 | 데이터 저장(쓰기), 컨트랙트 배포 | 비쌈 |
 | 데이터 읽기 (`view` 함수: ownerOf, tokenURI) | **무료** |
 
-**온체인 컨트랙트의 핵심 트릭:** SVG 이미지(8KB)를 통째로 저장하지 않고, **"토큰 ID로 그림을 생성하는 공식"(1.5KB)만** 저장.
+**온체인 컨트랙트의 핵심 트릭:** SVG 이미지를 통째로 storage에 저장하지 않고, **"토큰 ID로 그림을 생성하는 공식"만** 컨트랙트 코드에 담음.
 ```solidity
 uint256 hue1 = (tokenId * 137 + 42) % 360;  // 그림 데이터가 아니라 "공식"을 저장
 ```
-- 100만 개 NFT를 발행해도 컨트랙트 크기는 그대로(공식은 한 번만 저장).
+- 토큰을 아무리 많이 발행해도 storage에 그림 데이터를 안 쌓으므로 컨트랙트가 비대해지지 않음(공식은 코드에 한 번만).
 - `tokenURI`는 `view` 함수라 호출(그림 보기)은 가스 무료.
-- 의외로 mint 자체는 온체인이 더 쌈(IPFS 문자열 저장 안 하니까). 배포만 메인보다 2~3배 비쌈.
+- 트레이드오프: 그림을 생성하는 로직이 들어가 **배포(deploy) 가스는 메인보다 더 든다**. 대신 IPFS 의존이 사라지고 그림이 영구 보존됨.
+
+> ⚠️ **정량 수치는 단정하지 말 것.** "정확히 몇 배 싸다/비싸다"는 직접 측정 안 했으면 말하지 마세요. 평가관이 물으면: *"I haven't benchmarked exact numbers, but deploying the on-chain contract costs more gas because it carries the generation logic; the trade-off is permanence with no IPFS dependency."*
 
 > **Say (EN):** *"I store the formula that generates the image, not the image data itself — stored once, computed on each call. So no matter how many NFTs are minted, the contract size stays the same, and reading is free because tokenURI is a view function."*
 > **평가 답변 (KR):** "이미지 데이터가 아니라 이미지를 만드는 공식만 저장해서, 한 번만 저장하고 매번 계산합니다. 그래서 NFT가 아무리 많아도 컨트랙트 크기는 그대로고, 조회는 view 함수라 무료입니다."
@@ -1020,6 +1047,40 @@ cd code && npx hardhat test   # 15개 전부 통과
 | 메인 1~8 | name/symbol, owner=deployer, 초기 0, 민팅+ownerOf+tokenURI, 타 주소 민팅, **비-owner 민팅 revert(보안)**, ID 증가, 비존재 토큰 revert |
 | 온체인 9~15 | name/symbol, owner, 민팅, `data:` URI 시작, **JSON 디코딩 후 필드 검증**, **SVG에 `42`/`keokim` 포함 검증**, 비존재 토큰 revert |
 
+> 테스트는 happy-path 위주이고, 상속받은 ERC-721 함수(transfer/approve/balanceOf/supportsInterface)는 자동 테스트가 없습니다. 이것들은 OpenZeppelin 검증 코드라 안전하지만, 평가관이 물으면 BscScan에서 라이브로 보여주면 됩니다(§7.5 참고). 답변: *"Those come straight from audited OpenZeppelin code, so I didn't re-test them, but I can call them live on BscScan."*
+
+### 10.5 Mint / Upload 스크립트 워크스루 (mint/scripts/)
+
+| 파일 / 핵심 줄 | Say (EN) | KR |
+|----------------|----------|----|
+| `upload-to-ipfs.ts` → `uploadFile()` | "It POSTs the SVG to Pinata's pinFileToIPFS endpoint with my API keys and gets back a CID." | Pinata에 이미지 업로드 → CID |
+| `upload-to-ipfs.ts` → `metadata.image = ipfs://${imageCID}` | "I inject the image CID into the metadata, then upload the JSON — so the upload is two sequential calls, image first." | 이미지 CID를 메타데이터에 주입 후 JSON 업로드 |
+| `upload-to-ipfs.ts` → writes `ipfs-cids.json` | "It records both CIDs locally for the mint step." | CID 기록 저장 |
+| `mint-nft.ts` → `loadConfig()` | "Reads the deployed address from deployment/ and the ABI from the compiled artifact." | 주소+ABI 로딩 |
+| `mint-nft.ts` → `privateKeyToAccount(process.env.PRIVATE_KEY)` | "Builds a viem wallet from my private key in .env to sign the transaction." | .env 키로 서명자 생성 |
+| `mint-nft.ts` → `writeContract({ functionName:"mintNFT", args:[addr, tokenURI] })` | "Calls mintNFT with my address and the metadata IPFS URI." | mintNFT(주소, tokenURI) 호출 |
+| `mint-nft.ts` → `waitForTransactionReceipt` + `ownerOf` | "Waits for confirmation, then reads ownerOf to verify I own it, and saves mint-record.json." | 확정 대기 → ownerOf 검증 → 기록 |
+
+### 10.6 Ignition 배포 모듈 (code/ignition/modules/TokenizeArt42.ts)
+
+| 코드 | Say (EN) | KR |
+|------|----------|----|
+| `buildModule("TokenizeArt42Module", (m) => {...})` | "Hardhat Ignition is a declarative deployment system — I declare what to deploy, it handles ordering and records the addresses." | 선언적 배포 |
+| `m.contract("TokenizeArt42")` + `m.contract("TokenizeArt42OnChain")` | "I deploy both contracts in one module, so a single command deploys the IPFS one and the on-chain one together." | 두 컨트랙트 한 번에 배포 |
+
+### 10.7 웹사이트 컴포넌트 (website/src/)
+
+| 파일 | Say (EN) | KR |
+|------|----------|----|
+| `wagmi.ts` (getDefaultConfig, chains:[bscTestnet]) | "RainbowKit/wagmi config locked to BSC Testnet." | BSC Testnet 전용 설정 |
+| `contract.ts` | "Holds both contract addresses and minimal ABI fragments; the UI uses the on-chain address." | 주소+ABI, UI는 온체인 사용 |
+| `ConnectWallet.tsx` | "Just RainbowKit's ConnectButton for wallet connection." | RainbowKit 연결 버튼 |
+| `MintButton.tsx` (`useWriteContract`, `useWaitForTransactionReceipt`) | "useWriteContract sends mintNFT(myAddress); useWaitForTransactionReceipt tracks pending→confirmed and shows a BscScan link." | 쓰기 훅 + 영수증 추적 |
+| `NftDisplay.tsx` (`useReadContract('tokenURI')`, `atob`) | "Reads tokenURI, strips the data:application/json;base64 prefix, atob-decodes it to JSON, and renders metadata.image — which is itself a base64 SVG." | tokenURI 읽고 base64 디코딩해 렌더 |
+| `OwnerCheck.tsx` (`useReadContract('ownerOf')`) | "It's ownerOf with a GUI — type a token ID, see the owner." | ownerOf의 GUI 버전 |
+
+> "웹사이트가 온체인 이미지를 어떻게 읽어요?" 답변: *"NftDisplay calls tokenURI on the on-chain contract, decodes the base64 JSON in the browser, and the image field is a base64 SVG data URI it renders directly — no server, no IPFS."*
+
 ---
 
 ## 11. Self-Check & Safety / 자가 점검과 안전 수칙
@@ -1047,6 +1108,7 @@ cd code && npx hardhat test   # 15개 전부 통과
 | tBNB 부족 | `https://www.bnbchain.org/en/testnet-faucet`에서 무료 충전 |
 | Pinata 게이트웨이 느림 | 대체: `https://ipfs.io/ipfs/<CID>` |
 | 웹사이트 안 뜸 | BscScan Read/Write Contract로 모든 시연 가능 (백업) |
+| 지갑 연결 안 됨 (WalletConnect 오류) | `website/src/config/wagmi.ts`의 `projectId`가 placeholder라 WalletConnect(모바일 QR)는 실패할 수 있음. **MetaMask(브라우저 확장)는 정상 동작**하므로 MetaMask로만 연결. 안전하게 하려면 평가 전 reown.com(구 WalletConnect Cloud)에서 무료 projectId 발급받아 교체 |
 | 모든 게 실패 | **이미 배포·민팅된 BscScan 기록이 진짜 증거.** "이미 mint된 #0이 영구히 살아있습니다." |
 
 ### 11.4 만능 답변 3종 (universal fallback lines, in English)
