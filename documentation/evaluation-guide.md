@@ -287,6 +287,8 @@ cat mint/metadata/0.json
 > mintNFT 함수는 onlyOwner 수정자로 보호되어, 배포자만 호출할 수 있습니다. _safeMint를 사용하여 수신 주소가 컨트랙트일 경우 ERC-721 수신 인터페이스를 구현했는지 확인합니다. 이렇게 하면 토큰이 영구적으로 잠기는 것을 방지합니다.
 >
 > 메타데이터의 artist는 제 로그인 'keokim'이고, name은 '42 TokenizeArt Genesis'로 42와 제목을 포함합니다."
+>
+> **(EN)** "The contract inherits OpenZeppelin v5's ERC721URIStorage and Ownable. ERC721URIStorage lets me store a per-token metadata URI, and Ownable restricts minting to the owner. The `mintNFT` function is guarded by the `onlyOwner` modifier, so only the deployer can call it. I use `_safeMint` so that if the receiver is a contract, it must implement the ERC-721 receiver interface — this prevents tokens from being locked forever. In the metadata, the artist is my login 'keokim', and the name '42 TokenizeArt Genesis' includes 42 and a title, as the subject requires."
 
 ---
 
@@ -362,6 +364,8 @@ ls documentation/
 > tokenURI(0)는 ipfs://Qm...를 반환하며, 이 URI를 IPFS gateway를 통해 열면 메타데이터 JSON을 볼 수 있습니다. JSON의 image 필드가 다시 IPFS URI를 가리키고, 그것이 실제 NFT 이미지입니다.
 >
 > 모든 배포 기록은 deployment/deployed-address.json에, 민팅 기록은 mint/mint-record.json에 남아있습니다."
+>
+> **(EN)** "Token #0 was minted successfully. On BscScan, calling `ownerOf(0)` returns my wallet `0xE6CB80...`, which proves on-chain that I own this NFT. `tokenURI(0)` returns `ipfs://Qm...`; opening that through an IPFS gateway shows the metadata JSON, whose image field points to another IPFS URI — the actual artwork. All deployment info is in deployment/deployed-address.json and the mint record is in mint/mint-record.json."
 
 ---
 
@@ -450,6 +454,8 @@ function tokenURI(uint256 tokenId) public view override returns (string memory) 
 **평가자에게 설명:**
 
 > "온체인 컨트랙트는 tokenURI()를 호출하면 IPFS가 아닌, 컨트랙트 자체에서 SVG와 JSON을 실시간 생성합니다. tokenId에 따라 색상이 결정적으로 변하므로 각 토큰마다 고유한 아트워크가 생성됩니다. 결과는 data: URI로 반환되어, 외부 서버가 다운되어도 NFT가 영원히 존재합니다."
+>
+> **(EN)** "When you call `tokenURI()` on the on-chain contract, it generates the SVG and JSON in real time inside the contract — not from IPFS. The colors change deterministically based on the token ID, so each token gets a unique artwork. The result is returned as a `data:` URI, so the NFT exists forever even if every external server goes down."
 
 ### 5.3 Hardhat 설정 설명
 
@@ -535,7 +541,9 @@ npm run dev
 
 **평가자에게 설명:**
 
-> "웹사이트는 React로 구현했고, wagmi와 RainbowKit으로 MetaMask 지갑 연결을 지원합니다. Mint 버튼을 누르면 온체인 컨트랙트의 mintNFT 함수를 호출하고, MetaMask에서 트랜잭션을 승인하면 블록체인에 NFT가 생성됩니다. NFT Display 섹션에서 Token ID를 입력하면 온체인에서 직접 SVG 이미지를 불러와 표시합니다."
+> "웹사이트는 React로 구현했고, wagmi와 RainbowKit으로 MetaMask 지갑 연결을 지원합니다. Mint 버튼을 누르면 온체인 컨트랙트의 mintNFT 함수를 호출하고, MetaMask에서 트랜잭션을 승인하면 블록체인에 NFT가 생성됩니다. Explorer 섹션에서 Token ID를 입력하면 온체인에서 직접 SVG 이미지를 불러와 표시합니다."
+>
+> **(EN)** "The website is built with React, and wagmi plus RainbowKit handle the MetaMask wallet connection. Clicking Mint calls the on-chain contract's `mintNFT` function; once I approve the transaction in MetaMask, the NFT is created on-chain. In the Explorer section, entering a token ID fetches and renders the SVG directly from the contract."
 
 ### 6.3 On-Chain Inscriptions / 온체인 인스크립션
 
@@ -572,6 +580,8 @@ echo "eyJuYW1lI..." | base64 -d
 > 즉, 메타데이터와 이미지가 모두 블록체인 자체에 존재합니다. IPFS 노드가 다운되거나 Pinata가 서비스를 중단해도, 이 NFT는 블록체인이 존재하는 한 영원히 접근 가능합니다.
 >
 > 각 토큰은 tokenId 기반으로 고유한 색상 조합을 가지므로, 민팅할 때마다 다른 아트워크가 생성됩니다."
+>
+> **(EN)** "The TokenizeArt42OnChain contract doesn't use IPFS at all. When `tokenURI()` is called, the contract generates the SVG in real time, embeds it into the JSON metadata as Base64, and returns the whole thing as a Base64-encoded `data:` URI. So both the metadata and the image live on the blockchain itself — even if IPFS nodes go down or Pinata stops, this NFT stays accessible as long as the blockchain exists. Each token has a unique color combination derived from its token ID, so every token renders a different artwork."
 
 ---
 
