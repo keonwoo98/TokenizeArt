@@ -41,8 +41,12 @@
 | **Deployer / Owner** | `0xE6CB80D7d2439512b36f841FF8F82a87500f220b` |
 | **Token #0 Owner** | `0xE6CB80D7d2439512b36f841FF8F82a87500f220b` |
 | **Token Standard** | BEP-721 (= ERC-721 on BSC) |
-| **Collection Name** | 42 TokenizeArt by keokim |
-| **Symbol** | T42K |
+| **Collection Name (Main/IPFS)** | 42 TokenizeArt by keokim |
+| **Symbol (Main/IPFS)** | T42K |
+| **Collection Name (OnChain)** | 42 TokenizeArt OnChain by keokim |
+| **Symbol (OnChain)** | T42O |
+
+> 💡 BscScan에서 두 컨트랙트의 `name()`/`symbol()`이 다르게 나오는 게 정상입니다. 메인=`T42K`, 온체인=`T42O`. 웹사이트 데모는 **온체인(T42O)** 컨트랙트를 사용합니다.
 
 **BscScan Links:**
 - Contract (IPFS): `https://testnet.bscscan.com/address/0xb95Fd55B6103AC0939441853eE78524D0Fb20233`
@@ -1057,7 +1061,7 @@ cd code && npx hardhat test   # 15개 전부 통과
 | 메인 1~8 | name/symbol, owner=deployer, 초기 0, 민팅+ownerOf+tokenURI, 타 주소 민팅, **비-owner 민팅 revert(보안)**, ID 증가, 비존재 토큰 revert |
 | 온체인 9~15 | name/symbol, owner, 민팅, `data:` URI 시작, **JSON 디코딩 후 필드 검증**, **SVG에 `42`/`keokim` 포함 검증**, 비존재 토큰 revert |
 
-> 테스트는 happy-path 위주이고, 상속받은 ERC-721 함수(transfer/approve/balanceOf/supportsInterface)는 자동 테스트가 없습니다. 이것들은 OpenZeppelin 검증 코드라 안전하지만, 평가관이 물으면 BscScan에서 라이브로 보여주면 됩니다(§7.5 참고). 답변: *"Those come straight from audited OpenZeppelin code, so I didn't re-test them, but I can call them live on BscScan."*
+> 테스트는 happy-path 위주이고, 상속받은 ERC-721 함수(transfer/approve/balanceOf/supportsInterface)는 자동 테스트가 없습니다. 이것들은 OpenZeppelin 검증 코드라 안전하지만, 평가관이 물으면 BscScan에서 라이브로 보여주면 됩니다(§7 Phase 3, 데모 11~13 참고). 답변: *"Those come straight from audited OpenZeppelin code, so I didn't re-test them, but I can call them live on BscScan."*
 
 ### 10.5 Mint / Upload 스크립트 워크스루 (mint/scripts/)
 
